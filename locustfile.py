@@ -67,5 +67,3 @@ class WebsiteUser(HttpUser):
     tasks = [PartyBehavior]
     wait_time = between(1, 3)  # 요청 간 대기 시간
     host = "http://localhost:8080"  # 로컬 서버 URL
-    # host = "https://gyural.shop:8080"  # 로컬 서버 URL
-    # host = "https://3.34.146.211.nip.io"
