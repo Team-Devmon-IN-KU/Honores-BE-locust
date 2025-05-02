@@ -1,11 +1,16 @@
 import requests
 from locust import HttpUser, TaskSet, task, between
 import random
+from dotenv import load_dotenv
+import os
 
 # ✅ 전역 세션/토큰 저장소
 SESSIONS = []
 CSRF_TOKENS = []
-HOST = "http://localhost:8080"  # 서버 주소
+# .env 파일을 현재 디렉토리에서 로드
+load_dotenv()
+# HOST = "http://localhost:8080"  # 서버 주소
+HOST = os.getenv("SLAVE_HOST")
 
 def init_tokens(user_id, user_pw):
     with requests.Session() as session:
@@ -172,13 +177,17 @@ class UserBehavior(TaskSet):
     tasks.append(GetCurrentParkingBeforePayment) # 8. 정산시작 (GET) /api/v1/pakring/paymentInfo
     tasks.append(GetMyPageUsername)  # 9. 로그인한 사용자 이름 가져오기 (GET) /api/v1/mypage/username
     tasks.append(PutMyPageInfo) # 10. 로그인한 사용자 정보 수정 (PUT) /api/v1/mypage/info
-    tasks.append(PutMemberPassword) # 11. 로그인한 사용자 비밀번호 변경 (PUT) /api/v1/mypage/info/password
+    # tasks.append(PutMemberPassword) # 11. 로그인한 사용자 비밀번호 변경 (PUT) /api/v1/mypage/info/password
 
 class WebsiteUser(HttpUser):
     user_id = None
     tasks = [UserBehavior]
     wait_time = between(1, 3)
-    host = "http://localhost:8080"
+    # host = "http://localhost:8080"
+    load_dotenv()
+    # 환경 변수 SLAVE_HOST를 가져옴
+    host = os.getenv("SLAVE_HOST")
+    print(host)
 
     def on_start(self):
         # ✅ 세션만 미리 발급받은 리스트에서 랜덤 선택
